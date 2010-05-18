@@ -5,19 +5,19 @@ from django.http import HttpResponse
 from httpproxy import settings
 from httpproxy.exceptions import UnkownProxyMode
 from httpproxy.decorators import normalize_request, rewrite_response
- 
+from httpproxy.utils import get_proxy_infos
 
-PROXY_FORMAT = u'http://%s:%d%s' % (settings.PROXY_DOMAIN, settings.PROXY_PORT, u'%s')
-
-def proxy(request):
+def proxy(request, *args, **kwargs):
     conn = httplib2.Http()
     url = request.path
     
+    (domain, port, user, password) = get_proxy_infos(*args, **kwargs)
+    
     # Optionally provide authentication for server
-    try:
-        conn.add_credentials(settings.PROXY_USER, settings.PROXY_PASSWORD)
-    except AttributeError:
-        pass
+    if user and password:
+        conn.add_credentials(user, password)
+    
+    PROXY_FORMAT = u'http://%s:%d%s' % (domain, port, u'%s')
     
     if request.method == 'GET':
         url_ending = '%s?%s' % (url, request.GET.urlencode())

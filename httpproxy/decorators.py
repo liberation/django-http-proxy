@@ -4,9 +4,8 @@ from django.core.urlresolvers import reverse
 
 from httpproxy import settings
 from httpproxy.recorder import ProxyRecorder
+from httpproxy.utils import get_proxy_infos
 
-
-proxy = ProxyRecorder(settings.PROXY_DOMAIN, settings.PROXY_PORT)
 
 def normalize_request(fn):
     """
@@ -34,6 +33,9 @@ def record(fn):
         # Make the actual live request as usual
         response = fn(request, *args, **kwargs)
         
+        (domain, port, user, password) = get_proxy_infos(*args, **kwargs)
+        proxy = ProxyRecorder(domain, port)
+        
         # Record the request and response
         proxy.record(request, response)
 
@@ -46,6 +48,8 @@ def play(fn):
     previously recorded request/response.
     """
     def decorate(request, *args, **kwargs):
+        (domain, port, user, password) = get_proxy_infos(*args, **kwargs)
+        proxy = ProxyRecorder(domain, port)
         return proxy.playback(request)
     return decorate
 
