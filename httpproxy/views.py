@@ -19,11 +19,11 @@ def proxy(request, *args, **kwargs):
     
     PROXY_FORMAT = u'http://%s:%d%s' % (domain, port, u'%s')
     
-    if request.method == 'GET':
+    if request.method == 'GET' or request.method == "HEAD":
         url_ending = '%s?%s' % (url, request.GET.urlencode())
         url = PROXY_FORMAT % url_ending
         response, content = conn.request(url, request.method)
-    elif request.method == 'POST':
+    else:
         url = PROXY_FORMAT % url
         data = request.POST.urlencode()
         response, content = conn.request(url, request.method, data)
