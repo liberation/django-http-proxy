@@ -33,10 +33,16 @@ def proxy(request, *args, **kwargs):
         # might be not used by the remote resource...
         splitted_type = response['content-type'].split('charset=')
         [encoding] = splitted_type[-1:]
+        mimetype = splitted_type[0].split(';')[0]
         if len(splitted_type) > 1 and encoding.upper() != 'UTF-8':
             content = smart_unicode(content, encoding)
             response['content-type'] = response['content-type'].replace(encoding, 'UTF-8')
-            content = content.replace('encoding="%s"' % (encoding, ), 'encoding="UTF-8"')
+            if mimetype in ('text/html', 'application/xml', 'text/html'):
+                # <?xml ... encoding="***"?>
+                content = content.replace('encoding="%s"' % (encoding, ), 'encoding="UTF-8"')
+            if mimetype == 'text/html':
+                # <meta ... charset=***">
+                content = content.replace('charset=%s' % (encoding, ), 'charset=UTF-8')
     return HttpResponse(content, status=int(response['status']), mimetype=response['content-type'])
 
 
