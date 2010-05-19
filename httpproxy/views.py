@@ -1,6 +1,7 @@
 import httplib2
  
 from django.http import HttpResponse
+from django.utils.encoding import smart_unicode
 
 from httpproxy import settings
 from httpproxy.exceptions import UnkownProxyMode
@@ -27,6 +28,15 @@ def proxy(request, *args, **kwargs):
         url = PROXY_FORMAT % url
         data = request.POST.urlencode()
         response, content = conn.request(url, request.method, data)
+    if settings.PROXY_CONVERT_CHARSET:
+        # This is a pretty naive implementation, since the content-type header
+        # might be not used by the remote resource...
+        splitted_type = response['content-type'].split('charset=')
+        [encoding] = splitted_type[-1:]
+        if len(splitted_type) > 1 and encoding.upper() != 'UTF-8':
+            content = smart_unicode(content, encoding)
+            response['content-type'] = response['content-type'].replace(encoding, 'UTF-8')
+            content = content.replace('encoding="%s"' % (encoding, ), 'encoding="UTF-8"')
     return HttpResponse(content, status=int(response['status']), mimetype=response['content-type'])
 
 

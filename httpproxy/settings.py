@@ -24,3 +24,5 @@ PROXY_MODE = getattr(settings, 'PROXY_MODE', None)
 PROXY_IGNORE_UNSUPPORTED = getattr(settings, 'PROXY_IGNORE_UNSUPPORTED', True)
 
 PROXY_REWRITE_RESPONSES = getattr(settings, 'PROXY_REWRITE_RESPONSES', False)
+
+PROXY_CONVERT_CHARSET = getattr(settings, 'PROXY_CONVERT_CHARSET', False)
