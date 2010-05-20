@@ -37,7 +37,7 @@ def proxy(request, *args, **kwargs):
         if len(splitted_type) > 1 and encoding.upper() != 'UTF-8':
             content = smart_unicode(content, encoding)
             response['content-type'] = response['content-type'].replace(encoding, 'UTF-8')
-            if mimetype in ('text/html', 'application/xml', 'text/html'):
+            if mimetype in ('text/html', 'application/xml', 'text/xml'):
                 # <?xml ... encoding="***"?>
                 content = content.replace('encoding="%s"' % (encoding, ), 'encoding="UTF-8"')
             if mimetype == 'text/html':
