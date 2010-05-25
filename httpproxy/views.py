@@ -38,7 +38,9 @@ def proxy(request, *args, **kwargs):
         splitted_type = response['content-type'].split('charset=')
         [encoding] = splitted_type[-1:]
         mimetype = splitted_type[0].split(';')[0]
-        if len(splitted_type) > 1 and encoding.upper() != 'UTF-8':
+        if settings.PROXY_FORCE_CONVERT_CHARSET_FROM:
+            encoding = settings.PROXY_FORCE_CONVERT_CHARSET_FROM
+        if len(splitted_type) > 1 or settings.PROXY_FORCE_CONVERT_CHARSET_FROM and encoding.upper() != 'UTF-8':
             content = smart_unicode(content, encoding)
             response['content-type'] = response['content-type'].replace(encoding, 'UTF-8')
             if mimetype in ('text/html', 'application/xml', 'text/xml'):
