@@ -20,14 +20,18 @@ def proxy(request, *args, **kwargs):
     
     PROXY_FORMAT = u'http://%s:%d%s' % (domain, port, u'%s')
     
+    headers = {}
+    if settings.PROXY_COOKIE:
+        headers = {"Cookie": settings.PROXY_COOKIE}
+    
     if request.method == 'GET' or request.method == "HEAD":
         url_ending = '%s?%s' % (url, request.GET.urlencode())
         url = PROXY_FORMAT % url_ending
-        response, content = conn.request(url, request.method)
+        response, content = conn.request(url, request.method, headers=headers)
     else:
         url = PROXY_FORMAT % url
         data = request.POST.urlencode()
-        response, content = conn.request(url, request.method, data)
+        response, content = conn.request(url, request.method, data, headers=headers)
     if settings.PROXY_CONVERT_CHARSET:
         # This is a pretty naive implementation, since the content-type header
         # might be not used by the remote resource...
