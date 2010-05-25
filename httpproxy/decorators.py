@@ -33,7 +33,7 @@ def record(fn):
         # Make the actual live request as usual
         response = fn(request, *args, **kwargs)
         
-        (domain, port, user, password) = get_proxy_infos(*args, **kwargs)
+        (domain, port, user, password, cookie) = get_proxy_infos(*args, **kwargs)
         proxy = ProxyRecorder(domain, port)
         
         # Record the request and response
@@ -48,7 +48,7 @@ def play(fn):
     previously recorded request/response.
     """
     def decorate(request, *args, **kwargs):
-        (domain, port, user, password) = get_proxy_infos(*args, **kwargs)
+        (domain, port, user, password, cookie) = get_proxy_infos(*args, **kwargs)
         proxy = ProxyRecorder(domain, port)
         return proxy.playback(request)
     return decorate

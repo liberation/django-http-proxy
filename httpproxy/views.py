@@ -12,7 +12,7 @@ def proxy(request, *args, **kwargs):
     conn = httplib2.Http()
     url = request.path
     
-    (domain, port, user, password) = get_proxy_infos(*args, **kwargs)
+    (domain, port, user, password, cookie) = get_proxy_infos(*args, **kwargs)
     
     # Optionally provide authentication for server
     if user and password:
@@ -21,8 +21,8 @@ def proxy(request, *args, **kwargs):
     PROXY_FORMAT = u'http://%s:%d%s' % (domain, port, u'%s')
     
     headers = {}
-    if settings.PROXY_COOKIE:
-        headers = {"Cookie": settings.PROXY_COOKIE}
+    if cookie:
+        headers = {"Cookie": cookie}
     
     if request.method == 'GET' or request.method == "HEAD":
         url_ending = '%s?%s' % (url, request.GET.urlencode())
