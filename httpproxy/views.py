@@ -24,14 +24,16 @@ def proxy(request, *args, **kwargs):
     if cookie:
         headers = {"Cookie": cookie}
     
-    if request.method == 'GET' or request.method == "HEAD":
+    method = 'method' in kwargs and kwargs['method'] or request.method
+    
+    if method == 'GET' or method == "HEAD":
         url_ending = '%s?%s' % (url, request.GET.urlencode())
         url = PROXY_FORMAT % url_ending
-        response, content = conn.request(url, request.method, headers=headers)
+        response, content = conn.request(url, method, headers=headers)
     else:
         url = PROXY_FORMAT % url
         data = request.POST.urlencode()
-        response, content = conn.request(url, request.method, data, headers=headers)
+        response, content = conn.request(url, method, data, headers=headers)
     if settings.PROXY_CONVERT_CHARSET:
         # This is a pretty naive implementation, since the content-type header
         # might be not used by the remote resource...
