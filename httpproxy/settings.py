@@ -30,3 +30,5 @@ PROXY_CONVERT_CHARSET = getattr(settings, 'PROXY_CONVERT_CHARSET', False)
 PROXY_FORCE_CONVERT_CHARSET_FROM = getattr(settings, 'PROXY_FORCE_CONVERT_CHARSET_FROM', None)
 
 PROXY_COOKIE = getattr(settings, 'PROXY_COOKIE', None)
+
+PROXY_TIMEOUT = getattr(settings, 'PROXY_TIMEOUT', None)

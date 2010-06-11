@@ -9,7 +9,8 @@ from httpproxy.decorators import normalize_request, rewrite_response
 from httpproxy.utils import get_proxy_infos
 
 def proxy(request, *args, **kwargs):
-    conn = httplib2.Http()
+    timeout = 'timeout' in kwargs and kwargs['timeout'] or settings.PROXY_TIMEOUT
+    conn = httplib2.Http(timeout=timeout)
     url = request.path
     
     (domain, port, user, password, cookie) = get_proxy_infos(*args, **kwargs)
