@@ -28,7 +28,10 @@ def proxy(request, *args, **kwargs):
     method = 'method' in kwargs and kwargs['method'] or request.method
     
     if method == 'GET' or method == "HEAD":
-        url_ending = '%s?%s' % (url, request.GET.urlencode())
+        if request.GET:
+            url_ending = '%s?%s' % (url, request.GET.urlencode())
+        else:
+            url_ending = url
         url = PROXY_FORMAT % url_ending
         response, content = conn.request(url, method, headers=headers)
     else:
